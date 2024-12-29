@@ -1,0 +1,161 @@
+@echo off
+:menu
+cls
+echo ==============================
+echo 1. Add User
+echo 2. Delete User
+echo 3. Rename User
+echo 4. Move User to Group
+echo 5. Add Group
+echo 6. Delete Group
+echo 7. Rename Group
+echo 8. Count Users and Groups
+echo 9. Display Users and Groups
+echo 10. Exit
+echo ==============================
+set /p choice=Enter your choice: 
+
+if "%choice%"=="1" goto add_user
+if "%choice%"=="2" goto delete_user
+if "%choice%"=="3" goto rename_user
+if "%choice%"=="4" goto move_user
+if "%choice%"=="5" goto add_group
+if "%choice%"=="6" goto delete_group
+if "%choice%"=="7" goto rename_group
+if "%choice%"=="8" goto count_users_groups
+if "%choice%"=="9" goto display_users_groups
+if "%choice%"=="10" exit
+goto menu
+
+:add_user
+cls
+echo Add New User
+set /p username=Enter the new username: 
+set /p password=Enter the password for %username%: 
+net user %username% %password% /add
+if errorlevel 1 (
+    echo Failed to add user %username%.
+) else (
+    echo User %username% added successfully.
+)
+pause
+goto menu
+
+:delete_user
+cls
+echo Delete User
+set /p username=Enter the username to delete: 
+net user %username% /delete
+if errorlevel 1 (
+    echo Failed to delete user %username%.
+) else (
+    echo User %username% deleted successfully.
+)
+pause
+goto menu
+
+:rename_user
+cls
+echo Rename User
+set /p oldname=Enter the current username: 
+set /p newname=Enter the new username: 
+wmic useraccount where name="%oldname%" rename "%newname%"
+if errorlevel 1 (
+    echo Failed to rename user %oldname%.
+) else (
+    echo User %oldname% renamed to %newname% successfully.
+)
+pause
+goto menu
+
+:move_user
+cls
+echo Move User to Group
+set /p username=Enter the username to move: 
+set /p groupname=Enter the group name: 
+net localgroup %groupname% %username% /add
+if errorlevel 1 (
+    echo Failed to add user %username% to group %groupname%.
+) else (
+    echo User %username% added to group %groupname% successfully.
+)
+pause
+goto menu
+
+:add_group
+cls
+echo Add New Group
+set /p groupname=Enter the new group name: 
+net localgroup %groupname% /add
+if errorlevel 1 (
+    echo Failed to add group %groupname%.
+) else (
+    echo Group %groupname% added successfully.
+)
+pause
+goto menu
+
+:delete_group
+cls
+echo Delete Group
+set /p groupname=Enter the group name to delete: 
+net localgroup %groupname% /delete
+if errorlevel 1 (
+    echo Failed to delete group %groupname%.
+) else (
+    echo Group %groupname% deleted successfully.
+)
+pause
+goto menu
+
+:rename_group
+cls
+echo Rename Group
+set /p oldgroupname=Enter the current group name: 
+set /p newgroupname=Enter the new group name: 
+wmic group where name="%oldgroupname%" rename "%newgroupname%"
+if errorlevel 1 (
+    echo Failed to rename group %oldgroupname%.
+) else (
+    echo Group %oldgroupname% renamed to %newgroupname% successfully.
+)
+pause
+goto menu
+
+:count_users_groups
+cls
+echo Count Users and Groups
+echo Counting users...
+for /f %%i in ('net user ^| find /C /V ""') do set user_count=%%i
+echo Total Users: %user_count%
+echo Counting groups...
+for /f %%i in ('net localgroup ^| find /C /V ""') do set group_count=%%i
+echo Total Groups: %group_count%
+pause
+goto menu
+
+:display_users_groups
+cls
+echo Display Users and Groups
+echo 1. Display Users
+echo 2. Display Groups
+echo 3. Back to main menu
+echo ==============================
+set /p display_choice=Enter your choice: 
+
+if "%display_choice%"=="1" goto display_users
+if "%display_choice%"=="2" goto display_groups
+if "%display_choice%"=="3" goto menu
+goto display_users_groups
+
+:display_users
+cls
+net user
+pause
+goto display_users_groups
+
+:display_groups
+cls
+net localgroup
+pause
+goto display_users_groups
