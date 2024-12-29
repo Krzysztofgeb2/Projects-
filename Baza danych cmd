@@ -1,0 +1,67 @@
+@echo off
+setlocal enabledelayedexpansion
+
+:menu
+cls
+echo ==============================
+echo 1. Create Database
+echo 2. Add Data to Database
+echo 3. Display Database
+echo 4. Display Specific Columns
+echo 5. Exit
+echo ==============================
+set /p choice=Enter your choice: 
+
+if "%choice%"=="1" goto create_database
+if "%choice%"=="2" goto add_data
+if "%choice%"=="3" goto display_database
+if "%choice%"=="4" goto display_columns
+if "%choice%"=="5" exit
+goto menu
+
+:create_database
+cls
+echo Create Database
+set /p num_columns=Enter the number of columns: 
+echo Enter column names separated by space:
+set /p columns=Column names: 
+echo %columns% > database.txt
+echo Database created successfully with columns: %columns%
+pause
+goto menu
+
+:add_data
+cls
+echo Add Data to Database
+for /l %%i in (1,1,%num_columns%) do (
+    set /p data%%i=Enter data for column %%i: 
+    set /a data=%%i
+)
+set row_data=
+for /l %%i in (1,1,%num_columns%) do (
+    set row_data=!row_data! !data%%i!
+)
+echo !row_data! >> database.txt
+echo Data added: !row_data!
+pause
+goto menu
+
+:display_database
+cls
+echo Display Database
+type database.txt
+pause
+goto menu
+
+
+:display_columns
+cls
+echo Display Specific Columns
+set /p columns=Enter the column numbers to display (e.g., 1 3): 
+for /f "tokens=%columns% delims= " %%a in (database.txt) do (
+    echo %%a %%b
+)
+pause
+goto menu
+
+
