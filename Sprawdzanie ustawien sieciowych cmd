@@ -1,0 +1,96 @@
+@echo off
+:menu
+cls
+echo ==============================
+echo 1. Set IP, Mask, Gateway, DNS Manually
+echo 2. Set IP, Mask, Gateway, DNS Automatically
+echo 3. Network Diagnostics (Ping, Ipconfig, Traceroute, netstat)
+echo 4. Display Network Settings
+echo 5. Exit
+echo ==============================
+set /p choice=Enter your choice: 
+
+if "%choice%"=="1" goto manual_config
+if "%choice%"=="2" goto auto_config
+if "%choice%"=="3" goto network_diagnostics
+if "%choice%"=="4" goto display_settings
+if "%choice%"=="5" exit
+goto menu
+
+:manual_config
+cls
+echo Configure Network Settings Manually
+set /p interface=Enter the network interface name: 
+set /p ip=Enter the IP address: 
+set /p mask=Enter the Subnet Mask: 
+set /p gateway=Enter the Default Gateway: 
+set /p dns=Enter the DNS Server: 
+
+netsh interface ip set address name="%interface%" static %ip% %mask% %gateway%
+netsh interface ip set dns name="%interface%" static %dns%
+
+if errorlevel 1 (
+    echo Configuration failed. Please check the interface name.
+) else (
+    echo Configuration successful.
+)
+pause
+goto menu
+
+:auto_config
+cls
+echo Configure Network Settings Automatically
+set /p interface=Enter the network interface name: 
+
+netsh interface ip set address name="%interface%" source=dhcp
+netsh interface ip set dns name="%interface%" source=dhcp
+
+if errorlevel 1 (
+    echo Configuration failed. Please check the interface name.
+) else (
+    echo Configuration successful.
+)
+pause
+goto menu
+
+:network_diagnostics
+cls
+echo Network Diagnostics
+echo 1. Ping
+echo 2. Ipconfig
+echo 3. Traceroute/Tracert
+echo 4. Netstat
+echo 5. Back to main menu
+set /p diag_choice=Enter your choice: 
+
+if "%diag_choice%"=="1" goto ping
+if "%diag_choice%"=="2" goto ipconfig
+if "%diag_choice%"=="3" goto Traceroute
+if "%diag_choice%"=="4" goto netstat
+if "%diag_choice%"=="5" goto menu
+goto network_diagnostics
+
+:ping
+cls
+set /p host=Enter the host to ping: 
+ping %host%
+pause
+goto network_diagnostics
+
+:ipconfig
+cls
+ipconfig /all
+pause
+goto network_diagnostics
+
+:Traceroute
+cls
+set /p backer=Enter the host Tracert:
+Tracert %backer%
+pause
+goto network_diagnostics
+
+:netstat
+netstat 
+pause
+goto network_diagnostics
