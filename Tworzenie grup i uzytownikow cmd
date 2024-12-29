@@ -1,0 +1,95 @@
+@echo off
+:menu
+cls      
+echo ==============================
+echo 1. Create Users
+echo 2. Display Users and Groups
+echo 3. Exit
+echo ==============================
+set /p choice=Enter your choice: 
+
+if "%choice%"=="1" goto create_users
+if "%choice%"=="2" goto display_info
+if "%choice%"=="3" exit
+goto menu
+
+:create_users
+cls
+set /p user_count=Enter the number of users to create: 
+
+if %user_count% LSS 1 (
+    echo Invalid number of users. Please enter a number greater than 0.
+    pause
+    goto menu
+)
+set /a half_count=user_count / 2
+
+for /L %%i in (1,1,%user_count%) do (
+    setlocal enabledelayedexpansion
+    set "username=user%%i"
+    set "password=password%%i"
+
+    net user !username! !password! /add
+    if errorlevel 1 (
+       echo Faild to create user !username!.
+     ) else (
+       echo user !username! created.
+     )
+    
+
+    
+
+    if %%i LEQ !half_count! (
+        net localgroup studenci_informatyki !username! /add
+        if errorlevel 1 (
+            echo Faild to add useer !username! to group studenci_informatyki.
+        ) else (
+            echo user !username! added to grupy studenci_informatyki.
+        )
+    ) else (
+        net localgroup studenci_etyki !username! /add
+        if errorlevel 1 (
+            echo Faild to add user !username! to group studenci_etyki.
+        ) else (
+            echo user !username! added to grupy studenci_etyki.
+        )
+    )
+    endlocal
+)
+
+pause
+goto menu
+
+:display_info
+cls
+echo ==============================
+echo   Display Users and Groups
+echo ==============================
+echo 1. Display Users
+echo 2. Display Groups
+echo 3. Back to main menu
+echo ==============================
+set /p display_choice=Enter your choice: 
+
+if "%display_choice%"=="1" goto display_users
+if "%display_choice%"=="2" goto display_groups
+if "%display_choice%"=="3" goto menu
+goto display_info
+
+:display_users
+cls
+net user
+pause
+goto display_info
+
+:display_groups
+cls
+echo Members of group Studenci_informatyki
+net localgroup studenci_informatyki
+
+echo Members of group Studenci_etyki
+net localgroup studenci_etyki
+
+
+pause
+goto display_info
