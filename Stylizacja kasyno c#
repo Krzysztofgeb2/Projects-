@@ -1,0 +1,165 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Misc
+{
+    public class Narzedzia
+    {
+        public struct PozycjaMenu
+        {
+            public int Id;
+            public string Tekst;
+            public ConsoleKey? Przycisk;
+            public int DlugoscTekstu;
+
+            public PozycjaMenu(int Id, string Tekst, ConsoleKey? Przycisk = null)
+            {
+                this.Id = Id;
+                this.Tekst = $"{Przycisk} {Tekst}";
+                this.Przycisk = Przycisk;
+                this.DlugoscTekstu = this.Tekst.Length;
+            }
+
+            public void Wyswietl(ConsoleColor Tlo, ConsoleColor Czcionka, int Dlugosc)
+            {
+                Console.BackgroundColor = Tlo;
+                Console.ForegroundColor = Czcionka;
+                Console.Write(Tekst.PadRight(Dlugosc));
+                Console.ResetColor();
+            }
+        }
+
+        public struct Menu
+        {
+            public List<PozycjaMenu> Pozycje;
+            public ConsoleColor KolorTla;
+            public ConsoleColor KolorCzcionki;
+            public ConsoleColor KolorTlaZaznaczony;
+            public ConsoleColor KolorCzcionkiZaznaczony;
+
+            int MaksymalnaDlugosc;
+            int AktualnieZaznaczony;
+            int Blink;
+
+            public Menu(ConsoleColor KolorTla, ConsoleColor KolorCzcionki,
+                        ConsoleColor KolorTlaZaznaczony, ConsoleColor KolorCzcionkiZaznaczony)
+            {
+                Pozycje = new List<PozycjaMenu>();
+                this.KolorTla = KolorTla;
+                this.KolorCzcionki = KolorCzcionki;
+                this.KolorTlaZaznaczony = KolorTlaZaznaczony;
+                this.KolorCzcionkiZaznaczony = KolorCzcionkiZaznaczony;
+                this.MaksymalnaDlugosc = 0;
+                this.AktualnieZaznaczony = 0;
+                this.Blink = 0;
+            }
+
+            public void Dodaj(PozycjaMenu pozycja)
+            {
+                Pozycje.Add(pozycja);
+
+                if (pozycja.DlugoscTekstu > MaksymalnaDlugosc)
+                {
+                    MaksymalnaDlugosc = pozycja.DlugoscTekstu;
+                }
+            }
+
+            public void Wyswietl(int Left, int Top)
+            {
+                int aktualnaLinia = 0;
+                foreach (var pozycja in Pozycje)
+                {
+                    Console.SetCursorPosition(Left, Top + aktualnaLinia);
+
+                    if (aktualnaLinia == AktualnieZaznaczony)
+                    {
+                        pozycja.Wyswietl(Blink++ % 2 == 0 ? KolorTlaZaznaczony : ConsoleColor.Black, KolorCzcionkiZaznaczony, MaksymalnaDlugosc);
+                    }
+                    else
+                    {
+                        pozycja.Wyswietl(KolorTla, KolorCzcionki, MaksymalnaDlugosc);
+                    }
+
+                    aktualnaLinia++;
+                }
+            }
+
+            public int Wybierz(int Left, int Top)
+            {
+                Console.CursorVisible = false;
+
+                while (true)
+                {
+                    Wyswietl(Left, Top);
+
+                    if (Console.KeyAvailable)
+                    {
+                        var przycisk = Console.ReadKey(true).Key;
+
+                        if (przycisk == ConsoleKey.DownArrow)
+                        {
+                            AktualnieZaznaczony++;
+                            if (AktualnieZaznaczony > Pozycje.Count - 1)
+                                AktualnieZaznaczony = 0;
+                        }
+                        else if (przycisk == ConsoleKey.UpArrow)
+                        {
+                            AktualnieZaznaczony--;
+                            if (AktualnieZaznaczony < 0)
+                                AktualnieZaznaczony = Pozycje.Count - 1;
+                        }
+                        else if (przycisk == ConsoleKey.Enter)
+                        {
+                            Console.CursorVisible = true;
+                            return Pozycje[AktualnieZaznaczony].Id;
+                        }
+
+                        foreach (var pozycja in Pozycje)
+                        {
+                            if (pozycja.Przycisk == przycisk)
+                            {
+                                Console.CursorVisible = true;
+                                return pozycja.Id;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        Thread.Sleep(100);
+                    }
+
+                }
+            }
+        }
+
+
+        public static int WprowadzInt(string tekst, int min = int.MinValue, int max = int.MaxValue)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.Write(tekst);
+                    int wynik = int.Parse(Console.ReadLine());
+
+                    if (wynik >= min && wynik <= max)
+                    {
+                        return wynik;
+                    }
+                    else
+                    {
+                        throw new Exception($"Wartość poza zakresem {min}-{max}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+    }
+}
