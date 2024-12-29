@@ -1,0 +1,65 @@
+
+const int ledSamochodyZielona = 2;  // Pin zielonej diody LED dla samochodów
+const int ledSamochodyZolta = 3;    // Pin żółtej diody LED dla samochodów
+const int ledSamochodyCzerwona = 4; // Pin czerwonej diody LED dla samochodów
+const int ledPiesiZielona = 5;     // Pin zielonej diody LED dla pieszych
+const int ledPiesiCzerwona = 6;    // Pin czerwonej diody LED dla pieszych
+
+const int przyciskPin = 7; 
+
+void setup() {
+  pinMode(ledSamochodyZielona, OUTPUT);
+  pinMode(ledSamochodyZolta, OUTPUT);
+  pinMode(ledSamochodyCzerwona, OUTPUT);
+
+  pinMode(ledPiesiZielona, OUTPUT);
+  pinMode(ledPiesiCzerwona, OUTPUT);
+
+  pinMode(przyciskPin, INPUT_PULLUP); 
+  
+
+  digitalWrite(ledSamochodyZielona, HIGH);  
+  digitalWrite(ledSamochodyZolta, LOW);    
+  digitalWrite(ledSamochodyCzerwona, LOW); 
+
+  digitalWrite(ledPiesiZielona, LOW);     
+  digitalWrite(ledPiesiCzerwona, HIGH);   
+}
+
+void loop() { 
+  if (digitalRead(przyciskPin) == HIGH) {     
+    digitalWrite(ledSamochodyZielona, LOW); 
+    digitalWrite(ledSamochodyZolta, HIGH);  
+    digitalWrite(ledSamochodyCzerwona, LOW); 
+    delay(4000); 
+    
+    
+    digitalWrite(ledSamochodyZolta, LOW);  
+    digitalWrite(ledSamochodyCzerwona, HIGH); 
+    delay(4000);
+    digitalWrite(ledPiesiZielona, HIGH);   
+    digitalWrite(ledPiesiCzerwona, LOW);   
+    delay(10000); 
+
+    
+    for (int i = 0; i < 8; i++) {
+      digitalWrite(ledPiesiZielona, LOW);   
+      delay(200); 
+      digitalWrite(ledPiesiZielona, HIGH);  
+      delay(200); 
+    }
+
+    
+    digitalWrite(ledPiesiZielona, LOW);   
+    digitalWrite(ledPiesiCzerwona, HIGH); 
+    delay(1000);
+    
+   
+    digitalWrite(ledSamochodyZolta,HIGH);
+    delay(4000);
+    digitalWrite(ledSamochodyCzerwona, LOW);
+    digitalWrite(ledSamochodyZolta,LOW);
+    digitalWrite(ledSamochodyZielona, HIGH);  
+    
+  }
+}
