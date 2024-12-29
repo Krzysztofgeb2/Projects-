@@ -1,0 +1,66 @@
+using System;
+
+namespace KalkulatorBmi
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+           double liczba1 = 0.0;
+
+           double liczba2 = 0.0;
+            
+
+
+            Console.Write("Podaj swoja wage w kilogramach:");
+            liczba1 = double.Parse(Console.ReadLine());
+            if (liczba1 <= 0.0)
+            {
+                Console.WriteLine("nieprawidlowa waga");
+                return;
+            }
+
+
+            Console.Write("Podaj swoj wzrost w metrach :");
+            liczba2 = double.Parse(Console.ReadLine());
+            if (liczba2 <= 0.0)
+            {
+                Console.WriteLine("nieprawidlowy wzrost");
+                return;
+            }
+
+
+
+
+            double wynik = liczba1 / (liczba2 * liczba2);
+
+            if (wynik >= 17 && wynik <= 18.5)
+            {
+                Console.WriteLine($"Twoje BMI wynosi = {wynik} - niedowaga");
+            }
+            if (wynik >= 16 && wynik <= 16.99)
+            {
+                Console.WriteLine($"Twoje BMI wynosi = {wynik} - wychudzenie");
+            }
+            if (wynik < 16)
+            {
+                Console.WriteLine($"Twoje BMI wynosi = {wynik} - wyglodzenie");
+            }
+            if (wynik >= 18.6 && wynik <= 24.99)
+            {
+                Console.WriteLine($"Twoje BMI wynosi = {wynik} - Prawidlowa waga");
+            }
+            if (wynik >= 25 && wynik <= 29.9)
+            {
+                Console.WriteLine($"Twoje BMI wynosi = {wynik} - nadwaga");
+            }
+            if (wynik >= 30)
+            {
+                Console.WriteLine($"Twoje BMI wynosi = {wynik} - otyłosc");
+            }
+            
+
+
+        }
+    }
+}
