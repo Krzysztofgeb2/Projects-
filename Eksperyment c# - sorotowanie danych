@@ -1,0 +1,603 @@
+using System;
+using System.Diagnostics;
+using System.Threading;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        int[] losowe = { 845, 5123, 7929, 1162, 5768, 2982, 9586, 3324, 590, 7549, 7094, 3142, 6777, 7571, 9676, 5652, 3834, 4712, 6512, 8544, 9535, 3038, 993, 6019, 6842, 3143, 2708, 5456, 1512, 769, 6401, 8535, 7321, 3314, 5508, 5577, 7681, 684, 3743, 1555, 4989, 2778, 8321, 6934, 2805, 9779, 4421, 3288, 6074, 1970, 4594, 7990, 3271, 5858, 6830, 3310, 4640, 6110, 3817, 9398, 5692, 1455, 6351, 6513, 7539, 5140, 7138, 9522, 6060, 3088, 3549, 175, 5658, 5671, 3208, 8022, 9957, 5077, 7855, 6915, 8001, 6432, 5760, 1685, 6684, 6361, 5284, 4259, 2902, 7201, 9887, 2655, 6314, 2532, 4874, 4951, 2081 };
+        int[] rosnace = { 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 5100, 5200, 5300, 5400, 5500, 5600, 5700, 5800, 5900, 6000, 6100, 6200, 6300, 6400, 6500, 6600, 6700, 6800, 6900, 7000, 7100, 7200, 7300, 7400, 7500, 7600, 7700, 7800, 7900, 8000, 8100, 8200, 8300, 8400, 8500, 8600, 8700, 8800, 8900, 9000, 9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900 };
+        int[] malejace = { 9700, 9600, 9400, 9300, 9200, 9100, 9000, 8900, 8800, 8700, 8600, 8500, 8400, 8300, 8200, 8100, 8000, 7900, 7800, 7700, 7600, 7500, 7400, 7300, 7200, 7100, 7000, 6900, 6800, 6700, 6600, 6500, 6400, 6300, 6200, 6100, 6000, 5900, 5800, 5700, 5600, 5500, 5400, 5300, 5200, 5100, 5000, 4900, 4800, 4700, 4600, 4500, 4400, 4300, 4200, 4100, 4000, 3900, 3800, 3700, 3600, 3500, 3400, 3300, 3200, 3100, 3000, 2900, 2800, 2700, 2600, 2500, 2400, 2300, 2200, 2100, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 0 };
+        int[] vksztaltna = { 0, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800, 5000, 5200, 5400, 5600, 5800, 6000, 6200, 6400, 6600, 6800, 7000, 7200, 7400, 7600, 7800, 8000, 8200, 8400, 8600, 8800, 9000, 9200, 9400, 9600, 9800, 10000, 9900, 9700, 9500, 9300, 9100, 8900, 8700, 8500, 8300, 8100, 7900, 7700, 7500, 7300, 7100, 6900, 6700, 6500, 6300, 6100, 5900, 5700, 5500, 5300, 5100, 4900, 4700, 4500, 4300, 4100, 3900, 3700, 3500, 3300, 3100, 2900, 2700, 2500, 2300, 2100, 1900, 1700, 1500, 1300, 1100, 900, 700, 100 };
+        int[] aksztaltna = { 10000, 9400, 9200, 9000, 8800, 8600, 8400, 8200, 8000, 7800, 7600, 7400, 7200, 7000, 6800, 6600, 6400, 6200, 6000, 5800, 5600, 5400, 5200, 5000, 4800, 4600, 4400, 4200, 4000, 3800, 3600, 3400, 3200, 3000, 2800, 2600, 2400, 2200, 2000, 1800, 1600, 1400, 1200, 1000, 800, 600, 400, 200, 0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800, 5000, 5200, 5400, 5600, 5800, 6000, 6200, 6400, 6600, 6800, 7000, 7200, 7400, 7600, 7800, 8000, 8200, 8400, 8600, 8800, 9000, 9200, 9400, 10000 };
+        int[] losowodwudzielna = { 6709, 224, 5298, 4592, 5873, 8058, 1766, 6798, 2221, 5088, 9205, 1259, 7086, 4321, 7912, 3134, 8032, 242, 2345, 951, 2985, 6712, 4747, 1325, 4890, 7475, 9104, 869, 2826, 7269, 1535, 4795, 8218, 1238, 5861, 2458, 6657, 8216, 1151, 6044, 3479, 8128, 2646, 4263, 1017, 5278, 8212, 2495, 4266, 5317, 7118, 3161, 3528, 5682, 4222, 9374, 3816, 2213, 7919, 7595, 6180, 6452, 7633, 6870, 3571, 5323, 9317, 893, 7103, 4429, 9291, 2784, 9403, 3744, 8205, 8253, 5675, 7414, 2783, 3182, 2699, 9851, 1562, 5781, 8825, 963, 8695, 8612, 1577, 5201, 5708, 7266, 6742, 5739, 4918, 1975, 4087 };
+
+        //Console.WriteLine("losowe: " + losowe.Length);
+        //Console.WriteLine("rosnace: " + rosnace.Length);
+        //Console.WriteLine("malejace: " + malejace.Length);
+        //Console.WriteLine("vksztaltne: " + vksztaltna.Length);
+        //Console.WriteLine("aksztaltne: " + aksztaltna.Length);
+        //Console.WriteLine("losowdwudzielne: " + losowodwudzielna.Length);     
+
+        Stopwatch stopwatch = new Stopwatch();
+
+
+        stopwatch.Start();      
+        SelectionSort(losowe);
+        stopwatch.Stop();
+        Console.WriteLine("SelectionSort-losowe"+ stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        SelectionSort(rosnace);
+        stopwatch.Stop();
+        Console.WriteLine("SelectionSort-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        SelectionSort(malejace);
+        stopwatch.Stop();
+        Console.WriteLine("SelectionSort-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        SelectionSort(vksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("SelectionSort-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        SelectionSort(aksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("SelectionSort-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        SelectionSort(losowodwudzielna);
+        stopwatch.Stop();
+        Console.WriteLine("SelectionSort-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+        stopwatch.Start();
+        InsertionSort(losowe);
+        stopwatch.Stop();
+        Console.WriteLine("InsertionSort-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        InsertionSort(rosnace);
+        stopwatch.Stop();
+        Console.WriteLine("InsertionSort-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        InsertionSort(malejace);
+        stopwatch.Stop();
+        Console.WriteLine("InsertionSort-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        InsertionSort(vksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("InsertionSort-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        InsertionSort(aksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("InsertionSort-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        InsertionSort(losowodwudzielna);
+        stopwatch.Stop();
+        Console.WriteLine("InsertionSort-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+
+        stopwatch.Start();
+        BubbleSort(losowe);
+        stopwatch.Stop();
+        Console.WriteLine("BubbleSort-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        BubbleSort(rosnace);
+        stopwatch.Stop();
+        Console.WriteLine("BubbleSort-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        BubbleSort(malejace);
+        stopwatch.Stop();
+        Console.WriteLine("BubbleSort-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        BubbleSort(vksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("BubbleSort-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        BubbleSort(aksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("BubbleSort-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        BubbleSort(losowodwudzielna);
+        stopwatch.Stop();
+        Console.WriteLine("BubbleSort-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+        stopwatch.Start();
+        QuickSortExample.QuickSort(losowe,0,losowe.Length -1);
+        stopwatch.Stop();
+        Console.WriteLine("Quick-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        QuickSortExample.QuickSort(rosnace, 0, rosnace.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Quick-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        QuickSortExample.QuickSort(malejace, 0, malejace.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Quick-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        QuickSortExample.QuickSort(vksztaltna, 0, vksztaltna.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Quick-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        QuickSortExample.QuickSort(aksztaltna, 0, aksztaltna.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Quick-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        QuickSortExample.QuickSort(losowodwudzielna, 0, losowodwudzielna.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Quick-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+        stopwatch.Start();
+        MergeSortExample.MergeSort(losowe, 0, losowe.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Merge-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        MergeSortExample.MergeSort(rosnace, 0, rosnace.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Merge-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        MergeSortExample.MergeSort(malejace, 0, malejace.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Merge-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        MergeSortExample.MergeSort(vksztaltna, 0, vksztaltna.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Merge-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        MergeSortExample.MergeSort(aksztaltna, 0, aksztaltna.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Merge-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        MergeSortExample.MergeSort(losowodwudzielna, 0, losowodwudzielna.Length - 1);
+        stopwatch.Stop();
+        Console.WriteLine("Merge-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+
+        stopwatch.Start();
+        HeapSortExample.HeapSort(losowe);
+        stopwatch.Stop();
+        Console.WriteLine("Heap-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        HeapSortExample.HeapSort(rosnace);
+        stopwatch.Stop();
+        Console.WriteLine("Heap-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        HeapSortExample.HeapSort(malejace);
+        stopwatch.Stop();
+        Console.WriteLine("Heap-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        HeapSortExample.HeapSort(vksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("Heap-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        HeapSortExample.HeapSort(aksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("Heap-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        HeapSortExample.HeapSort(losowodwudzielna);
+        stopwatch.Stop();
+        Console.WriteLine("Heap-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+
+        stopwatch.Start();
+        CountSort(losowe, losowe.Max());
+        stopwatch.Stop();
+        Console.WriteLine("Count-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        CountSort(rosnace, rosnace.Max());
+        stopwatch.Stop();
+        Console.WriteLine("Count-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        CountSort(malejace, malejace.Max());
+        stopwatch.Stop();
+        Console.WriteLine("Count-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        CountSort(vksztaltna, vksztaltna.Max());
+        stopwatch.Stop();
+        Console.WriteLine("Count-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        CountSort(aksztaltna, aksztaltna.Max());
+        stopwatch.Stop();
+        Console.WriteLine("Count-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        CountSort(losowodwudzielna, losowodwudzielna.Max());
+        stopwatch.Stop();
+        Console.WriteLine("Count-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+
+
+        stopwatch.Start();
+        ShellSort(losowe);
+        stopwatch.Stop();
+        Console.WriteLine("ShellSort-losowe" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        ShellSort(rosnace);
+        stopwatch.Stop();
+        Console.WriteLine("ShellSort-rosnace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        ShellSort(malejace);
+        stopwatch.Stop();
+        Console.WriteLine("ShellSort-malejace" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        ShellSort(vksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("ShellSort-vksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        ShellSort(aksztaltna);
+        stopwatch.Stop();
+        Console.WriteLine("ShellSort-aksztaltna" + stopwatch.ElapsedTicks);
+        stopwatch.Reset();
+        stopwatch.Start();
+        ShellSort(losowodwudzielna);
+        stopwatch.Stop();
+        Console.WriteLine("ShellSort-losowodwudzielna" + stopwatch.ElapsedTicks);
+
+
+
+
+
+
+
+
+
+    }
+    static void PrintArray(int[] arr)
+    {
+        foreach (var item in arr)
+        {
+            Console.Write(item + " ");
+        }
+        Console.WriteLine();
+
+    }
+    static void SelectionSort(int[] arr)
+    {
+        
+        int n = arr.Length;
+
+        for (int i = 0; i < n - 1; i++)
+        {
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++)
+            {
+                if (arr[j] < arr[minIndex])
+                {
+                    minIndex = j;
+                }
+            }
+
+            int temp = arr[minIndex];
+            arr[minIndex] = arr[i];
+            arr[i] = temp;
+        }
+    }
+    static void InsertionSort(int[] arr)
+    {
+        int n = arr.Length;
+        for (int i = 1; i < n; ++i)
+        {
+            int key = arr[i];
+            int j = i - 1;
+
+            while (j >= 0 && arr[j] > key)
+            {
+                arr[j + 1] = arr[j];
+                j = j - 1;
+            }
+            arr[j + 1] = key;
+        }
+    }
+    static void BubbleSort(int[] arr)
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n - 1; i++)
+        {
+            for (int j = 0; j < n - i - 1; j++)
+            {
+                
+                if (arr[j] > arr[j + 1])
+                {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+
+    }
+    class QuickSortExample
+    {
+        
+        static void Swap(int[] arr, int i, int j)
+        {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+
+        
+        static int Partition(int[] arr, int low, int high)
+        {
+            int pivot = arr[high]; 
+            int i = low - 1; 
+
+            for (int j = low; j < high; j++)
+            {
+                
+                if (arr[j] <= pivot)
+                {
+                    i++;
+                    Swap(arr, i, j);
+                }
+            }
+
+            
+            Swap(arr, i + 1, high);
+
+            return i + 1; 
+        }
+
+        
+        public static void QuickSort(int[] arr, int low, int high)
+        {
+            if (low < high)
+            {
+               
+                int pivotIndex = Partition(arr, low, high);
+
+                
+                QuickSort(arr, low, pivotIndex - 1);
+                QuickSort(arr, pivotIndex + 1, high);
+            }
+        }
+    }
+    class MergeSortExample
+    {
+        
+        static void Merge(int[] arr, int l, int m, int r)
+        {
+            
+            int n1 = m - l + 1;
+            int n2 = r - m;
+
+           
+            int[] L = new int[n1];
+            int[] R = new int[n2];
+
+            
+            for (int i = 0; i < n1; ++i)
+                L[i] = arr[l + i];
+            for (int j = 0; j < n2; ++j)
+                R[j] = arr[m + 1 + j];
+
+            
+
+            
+            int k = l;
+            int p = 0, q = 0;
+
+            
+            while (p < n1 && q < n2)
+            {
+                if (L[p] <= R[q])
+                {
+                    arr[k] = L[p];
+                    p++;
+                }
+                else
+                {
+                    arr[k] = R[q];
+                    q++;
+                }
+                k++;
+            }
+
+           
+            while (p < n1)
+            {
+                arr[k] = L[p];
+                p++;
+                k++;
+            }
+
+         
+            while (q < n2)
+            {
+                arr[k] = R[q];
+                q++;
+                k++;
+            }
+        }
+
+       
+        public static void MergeSort(int[] arr, int l, int r)
+        {
+            if (l < r)
+            {
+                
+                int m = l + (r - l) / 2;
+
+                
+                MergeSort(arr, l, m);
+                MergeSort(arr, m + 1, r);
+
+             
+                Merge(arr, l, m, r);
+            }
+        }
+    }
+        class HeapSortExample
+        {
+            
+            static void Swap(int[] arr, int i, int j)
+            {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+
+            
+            static void Heapify(int[] arr, int heapSize, int root)
+            {
+                int largest = root; 
+                int leftChild = 2 * root + 1; 
+                int rightChild = 2 * root + 2; 
+
+                
+                if (leftChild < heapSize && arr[leftChild] > arr[largest])
+                    largest = leftChild;
+
+              
+                if (rightChild < heapSize && arr[rightChild] > arr[largest])
+                    largest = rightChild;
+
+                
+                if (largest != root)
+                {
+                    
+                    Swap(arr, root, largest);
+
+                    
+                    Heapify(arr, heapSize, largest);
+                }
+            }
+
+            
+            public static void HeapSort(int[] arr)
+            {
+                int n = arr.Length;
+
+                
+                for (int i = n / 2 - 1; i >= 0; i--)
+                    Heapify(arr, n, i);
+
+                
+                for (int i = n - 1; i > 0; i--)
+                {
+                    
+                    Swap(arr, 0, i);
+
+                    
+                    Heapify(arr, i, 0);
+                }
+            }         
+        }
+
+
+
+
+    public static void CountSort(int[] array, int max)
+    {
+        int[] count = new int[max + 1];
+        int[] output = new int[array.Length];
+
+       
+        for (int i = 0; i < array.Length; i++)
+        {
+            count[array[i]]++;
+        }
+
+        
+        for (int i = 1; i <= max; i++)
+        {
+            count[i] += count[i - 1];
+        }
+
+        
+        for (int i = array.Length - 1; i >= 0; i--)
+        {
+            output[count[array[i]] - 1] = array[i];
+            count[array[i]]--;
+        }
+
+        
+        for (int i = 0; i < array.Length; i++)
+        {
+            array[i] = output[i];
+        }
+    }
+
+    public static void ShellSort(int[] arr)
+    {
+        int n = arr.Length;
+
+        
+        for (int gap = n / 2; gap > 0; gap /= 2)
+        {
+            
+            for (int i = gap; i < n; i += 1)
+            {
+                
+                int temp = arr[i];
+
+                
+                int j;
+                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)
+                {
+                    arr[j] = arr[j - gap];
+                }
+
+                
+                arr[j] = temp;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
