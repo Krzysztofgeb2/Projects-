@@ -1,0 +1,911 @@
+namespace ConsoleApp7
+
+{
+    internal class Program
+    {
+        static string nick1;
+        static int wudeczka_1;
+        const int czterydwajeden = 0;
+        const int ruletka = 1;
+        const int blackjack = 2;
+        const string NAZWA_PLIKU = "ranking.csv";
+        static List<gracz> ListaOsob = new();               
+        static Random numGen = new Random(DateTime.Now.Millisecond);
+
+
+
+
+        public struct gracz
+        {
+            public string nick;
+
+            public int wudeczka;
+
+
+            static string WprowadzStringa(string ksyw, bool czyMozeBycPusty)
+            {
+                while (true)
+                {
+                    Console.Write(ksyw);
+
+                    var wartosc = Console.ReadLine();
+
+                    if (czyMozeBycPusty == true || string.IsNullOrEmpty(wartosc) == false)
+                    {
+                        return wartosc;
+                    }
+
+                }
+            }
+
+
+
+
+            public void WprowadzDaneKolego()
+            {
+                nick = nick1;
+                wudeczka = wudeczka_1;
+
+
+
+
+            }
+
+            public void wpswietlnickitp()
+            {
+                Console.WriteLine($"Nick: {nick} wódeczka: {wudeczka}");
+
+            }
+
+            public void ParsujDane(string linia)
+            {
+                var dane = linia.Split(';');
+                nick = dane[0];
+
+                int.TryParse(dane[1], out wudeczka);
+            }
+
+            public string Generuj()
+            {
+                return $"{nick};{wudeczka}";
+            }
+        }
+        static void WczytajDane()
+        {
+            ListaOsob.Clear();
+            
+
+            if (File.Exists(NAZWA_PLIKU) == true)
+            {
+                using var plik = new StreamReader(NAZWA_PLIKU);
+
+                while (plik.EndOfStream == false)
+                {
+                    var linia = plik.ReadLine();
+                    gracz osoba = new gracz();
+                    osoba.ParsujDane(linia);
+
+                    ListaOsob.Add(osoba);
+                    
+                }
+
+                Console.WriteLine($"Odczytalem z pliku {NAZWA_PLIKU} {ListaOsob.Count} ");
+            }
+        }
+
+        static void ZapiszDane()
+        {
+            using var plik = new StreamWriter(NAZWA_PLIKU);
+
+            foreach (var osoba in ListaOsob)
+            {
+                plik.WriteLine(osoba.Generuj());
+            }
+        }
+
+        static void DodajOsobe()
+        {
+            gracz osoba = new gracz();
+            osoba.WprowadzDaneKolego();
+            ListaOsob.Add(osoba);
+
+        }
+
+
+
+        static void Gra()
+        {
+            int wygranagracza = 0;
+            int wygranakrupiera = 0;
+            int liczbagier = 3;
+
+            while (liczbagier-- > 0)
+            {
+                Random kosci = new Random();
+                int[] kosc = new int[3];
+                int[] krupie = new int[3];
+                Console.Clear();
+                Narzedzia.Menu menu = new Narzedzia.Menu(ConsoleColor.DarkGreen, ConsoleColor.Black, ConsoleColor.Magenta, ConsoleColor.Blue);
+                menu.Dodaj(new Narzedzia.PozycjaMenu(1, "kosci"));
+                menu.Dodaj(new Narzedzia.PozycjaMenu(2, "ruletka"));
+                menu.Dodaj(new Narzedzia.PozycjaMenu(3, "Black Jack"));
+                menu.Dodaj(new Narzedzia.PozycjaMenu(4, "wroc"));
+                int wyborgracza = menu.Wybierz(0, 0);
+                Console.Clear();
+                if (wyborgracza == 4)
+                {
+                    Menugl();
+                }
+                if (wyborgracza == 1)
+                {
+
+                    if (wudeczka_1 > 0)
+                    {
+                        string input;
+
+                        int zetony = wudeczka_1;
+
+
+                        do
+                        {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                kosc[i] = kosci.Next(1, 7);
+                            }
+                            int sumagracza = kosc[0] + kosc[1] + kosc[2];
+                            Console.WriteLine($"Wyrzuciłes: {kosc[0]} {kosc[1]} {kosc[2]} suma = {sumagracza}");
+                            Array.Sort(kosc);
+
+
+
+
+                            for (int i = 0; i < 3; i++)
+                            {
+                                krupie[i] = kosci.Next(1, 7);
+                            }
+                            int sumakru = krupie[0] + krupie[1] + krupie[2];
+                            Console.WriteLine($"Krupier wyrzucił: {krupie[0]} {krupie[1]} {krupie[2]} suma = {sumakru}");
+
+
+
+
+                            if (kosc[1] == 4 && kosc[2] == 2 && kosc[3] == 1)
+                            {
+                                Console.WriteLine("421! Zdobywasz 100 wódeczki");
+                                zetony = zetony + 100;
+                            }
+
+                            if (sumagracza > sumakru)
+                            {
+                                Console.WriteLine("gracz zdobywa wódeczkę");
+                                zetony = zetony + 10;
+                                Console.WriteLine($"Posiadasz {zetony} wódeczki");
+                                wygranagracza++;
+
+                            }
+                            if (sumagracza < sumakru)
+                            {
+                                Console.WriteLine("Przegrales!");
+                                zetony = zetony - 10;
+                                Console.WriteLine($"Posiadasz {zetony} wódeczki");
+                                wygranakrupiera++;
+                            }
+                            if (sumagracza == sumakru)
+                            {
+                                Console.WriteLine("remis!! Masz szcęscie!! Wódeczka nie zostaje ani odjęta ani dodana!");
+
+                                Console.WriteLine($"Posiadasz {zetony} wódeczki");
+
+                            }
+
+                            if (true)
+                            {
+                                Console.WriteLine("Probuj dalej");
+                            }
+                            Console.WriteLine("grac dalej? Jeśli tak kliknij T/ jeśli nie kliknij dowlony klawisz!!!");
+                            input = Console.ReadLine();
+                            Console.Clear();
+                        }
+                        while (input.ToLower() == "t");
+
+
+
+
+                        wudeczka_1 = zetony;
+                        Console.WriteLine("dziekuje");
+
+
+                    }
+
+                    else
+                    {
+                        
+                        Console.WriteLine("Brak wudy prosze dokupic");
+                        Console.ReadKey();
+                        Console.Clear();
+                        Menugl();
+                    }
+                    Console.WriteLine($"Gracz: {wygranagracza}   krupier: {wygranakrupiera}");
+                    Thread.Sleep(1000);
+                    Console.Clear();
+                }
+
+                if (wyborgracza == 2)
+                {
+
+
+                    Random ran = new Random();
+                    var r = new Random();
+                    string[] Kolor = { "Czerwony", "Czarny" };
+                    int wybor;
+                    int Proby = 0;
+                    int Zaklad;
+                    int wodeczka = wudeczka_1;
+                    while (wodeczka != 0)
+                    {
+                        Console.WriteLine("Wódeczka:$" + wodeczka + "                  Próby: " + Proby);
+                        Console.WriteLine("Wybierz swój zakład:");
+                        Console.WriteLine("1.Parzyste    2.Nieparzyste    3.1 do 18    4.19 do 36");
+                        Console.WriteLine("5.Czerwony    6.Czarny    7.Wyjście");
+
+                        if (int.TryParse(Console.ReadLine(), out wybor))
+                        {
+
+
+                        }
+                        else
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Zły klawisz kolego!");
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                        }
+
+                        switch (wybor)
+                        {
+                            case 1:
+                                {
+                                    
+                                    Console.WriteLine("Podaj wartość zakładu");
+                                    if (int.TryParse(Console.ReadLine(), out Zaklad))
+                                    {
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Nie podano wartości zakładu!");
+                                        Thread.Sleep(1000);
+                                        Console.Clear();
+                                    }
+
+                                    if (Zaklad > wodeczka)
+                                    {
+                                        Console.WriteLine("You shall not pass");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        wodeczka -= Zaklad;
+                                        int roll = ran.Next(0, 37);
+                                        string ranKolor = Kolor[r.Next(Kolor.Length)];
+                                        bool parzyste = roll % 2 == 0;
+                                        if ((wybor == 1) && (parzyste == true))
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranKolor + " " + roll);
+                                            Console.WriteLine("Sigma wygrana! +Wódeczka" + Zaklad * 2 + "!");
+                                            Console.WriteLine("naciśnij enter aby zgarnąć łup");
+                                            wodeczka += Zaklad * 2;
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranKolor + " " + roll);
+                                            Console.WriteLine("Przewaliłeś! -Wódeczka" + Zaklad + "!");
+                                            Console.WriteLine("naciśnij enter aby spróbować swojego szczęścia");
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        break;
+                                    }
+                                }
+                            case 2:
+                                {
+                                    
+                                    Console.WriteLine("Podaj wartość zakładu");
+                                    if (int.TryParse(Console.ReadLine(), out Zaklad))
+                                    {
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Nie podano wartości");
+                                        Thread.Sleep(1000);
+                                        Console.Clear();
+                                    }
+
+                                    if (Zaklad > wodeczka)
+                                    {
+                                        Console.WriteLine("You shall not pass");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        wodeczka -= Zaklad;
+                                        int roll = ran.Next(0, 37);
+                                        string ranColor = Kolor[r.Next(Kolor.Length)];
+                                        bool parzyste = roll % 2 == 0;
+                                        if ((wybor == 2) && (parzyste != true))
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Sigma wygrana! +Wódeczka" + Zaklad * 2 + "!");
+                                            Console.WriteLine("naciśnij enter aby zgarnąć łup");
+                                            wodeczka += Zaklad * 2;
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Przewaliłeś! -Wódeczka" + Zaklad + "!");
+                                            Console.WriteLine("naciśnij enter aby spróbować swojego szczęścia");
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        break;
+                                    }
+                                }
+                            case 3:
+                                {
+                                    Console.WriteLine("Podaj wartość zakładu");
+                                    if (int.TryParse(Console.ReadLine(), out Zaklad))
+                                    {
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Nie podano wartości");
+                                        Thread.Sleep(1000);
+                                        Console.Clear();
+                                    }
+                                    if (Zaklad > wodeczka)
+                                    {
+                                        Console.WriteLine("You shall not pass");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        wodeczka -= Zaklad;
+                                        int roll = ran.Next(0, 37);
+                                        string ranColor = Kolor[r.Next(Kolor.Length)];
+                                        bool parzyste = roll % 2 == 0;
+
+                                        if ((wybor == 3) && (roll > 0) && (roll < 19))
+                                        {
+
+
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Sigma wygrana! +Wódeczka" + Zaklad * 2 + "!");
+                                            Console.WriteLine("naciśnij enter aby zgarnąć łup");
+                                            wodeczka += Zaklad * 2;
+                                            Proby += 1;
+                                            Console.ReadKey(); Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Przewaliłeś! -Wódeczka" + Zaklad + "!");
+                                            Console.WriteLine("naciśnij enter aby spróbować swojego szczęścia");
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        break;
+                                    }
+                                }
+                            case 4:
+                                {
+                                    Console.WriteLine("Podaj wartość zakładu");
+                                    if (int.TryParse(Console.ReadLine(), out Zaklad))
+                                    {
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Nie podano wartości");
+                                        Thread.Sleep(1000);
+                                        Console.Clear();
+                                    }
+                                    if (Zaklad > wodeczka)
+                                    {
+                                        Console.WriteLine("You shall not pass");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        wodeczka -= Zaklad;
+                                        int roll = ran.Next(0, 37);
+                                        string ranColor = Kolor[r.Next(Kolor.Length)];
+                                        bool parzyste = roll % 2 == 0;
+
+                                        if ((wybor == 3) && (roll > 18) && (roll < 37))
+                                        {
+
+
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Sigma wygrana! +Wódeczka" + Zaklad * 2 + "!");
+                                            Console.WriteLine("naciśnij enter aby zgarnąć łup");
+                                            wodeczka += Zaklad * 2;
+                                            Proby += 1;
+                                            Console.ReadKey(); Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Przewaliłeś! -Wódeczka" + Zaklad + "!");
+                                            Console.WriteLine("naciśnij enter aby spróbować swojego szczęścia");
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        break;
+                                    }
+                                }
+                            case 5:
+                                {
+                                    Console.WriteLine("Podaj wartość zakładu");
+                                    if (int.TryParse(Console.ReadLine(), out Zaklad))
+                                    {
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Nie podano wartości");
+                                        Thread.Sleep(1000);
+                                        Console.Clear();
+                                    }
+                                    if (Zaklad > wodeczka)
+                                    {
+                                        Console.WriteLine("You shall not pass");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        wodeczka -= Zaklad;
+                                        int roll = ran.Next(0, 37);
+                                        string ranColor = Kolor[r.Next(Kolor.Length)];
+                                        bool parzyste = roll % 2 == 0;
+                                        if ((wybor == 5) && (ranColor == "Czerwony"))
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Sigma wygrana! +Wódeczka" + Zaklad * 2 + "!");
+                                            Console.WriteLine("naciśnij enter aby zgarnąć łup");
+                                            wodeczka += Zaklad * 2;
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Przewaliłeś! -Wódeczka" + Zaklad + "!");
+                                            Console.WriteLine("naciśnij enter aby spróbować swojego szczęścia");
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        break;
+                                    }
+
+                                }
+                            case 6:
+                                {
+                                    Console.WriteLine("Podaj wartość zakładu");
+                                    if (int.TryParse(Console.ReadLine(), out Zaklad))
+                                    {
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Nie podano wartości");
+                                        Thread.Sleep(1000);
+                                        Console.Clear();
+                                    }
+
+                                    if (Zaklad > wodeczka)
+                                    {
+                                        Console.WriteLine("You shall not pass");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        wodeczka -= Zaklad;
+                                        int roll = ran.Next(0, 37);
+                                        string ranColor = Kolor[r.Next(Kolor.Length)];
+                                        bool parzyste = roll % 2 == 0;
+                                        if ((wybor == 6) && (ranColor == "Czarny"))
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Sigma wygrana! +Wódeczka" + Zaklad * 2 + "!");
+                                            Console.WriteLine("naciśnij enter aby zgarnąć łup");
+                                            wodeczka += Zaklad * 2;
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Ruletka wylosowała: " + ranColor + " " + roll);
+                                            Console.WriteLine("Przewaliłeś! -Wódeczka" + Zaklad + "!");
+                                            Console.WriteLine("naciśnij enter aby spróbować swojego szczęścia");
+                                            Proby += 1;
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                        }
+                                        break;
+
+                                    }
+
+                                }
+                            case 7:
+                                wudeczka_1 = wodeczka;
+                                Console.Clear();
+                                Menugl();
+                                break;
+
+                        }
+
+                    }
+
+                }
+                if (wyborgracza == 3)
+                {
+                    
+
+                    while (wudeczka_1 > 0)
+                    {
+                        
+                        Gra21();
+
+                        Console.Write("Kliknij przycisk aby wyjść ");
+                        string response = Console.ReadLine().ToLower();
+
+                        if (response != "")
+                            Console.Clear();
+                        break;
+                            
+
+                        
+                    }
+                    Console.WriteLine("Dziękujemy za grę!");
+                    static void Gra21()
+                    {
+                        int bj_wudeczka = wudeczka_1;
+                        List<string> deck = talia();                       
+                        tasowanie(deck);
+                        
+                        List<string> rekagracza = new List<string>();
+                        List<string> computerHand = new List<string>();
+
+                       
+                        rekagracza.Add(rozdanie(deck));
+                        computerHand.Add(rozdanie(deck));
+                        rekagracza.Add(rozdanie(deck));
+                        computerHand.Add(rozdanie(deck));
+
+                       
+                        Console.WriteLine("Twoja ręka: " + string.Join(", ", rekagracza));
+                        Console.WriteLine("Karta komputera: " + computerHand[0]);
+                        Console.WriteLine();
+
+
+                        while (true)
+                        {
+                            Console.Write("Czy chcesz dobrać kartę? (Tak/ Dowolny klawisz jesli nie): ");
+                            string pytajnik = Console.ReadLine().ToLower();
+
+                            if (pytajnik != "tak")
+                                break;
+
+                           
+                            rekagracza.Add(rozdanie(deck));
+
+                            
+                            Console.WriteLine("Twoja ręka: " + string.Join(", ", rekagracza));
+
+                            
+                            if (obliczenia(rekagracza) > 21)
+                            {
+                                Console.WriteLine("Przekroczyłeś 21 punktów. Przegrałeś!");
+                                return;
+                            }
+                        }
+
+                        
+                        while (obliczenia(computerHand) < 17)
+                        {                            
+                            computerHand.Add(rozdanie(deck));
+                        }
+                       
+                        Console.WriteLine("Ręka komputera: " + string.Join(", ", computerHand));
+                        Console.WriteLine();                        
+                        int playerScore = obliczenia(rekagracza);
+                        int computerScore = obliczenia(computerHand);
+
+                        if (playerScore > 21)
+                        {
+                            Console.WriteLine("Przekroczyłeś 21 punktów. Przegrałeś!");
+                        }
+                        else if (computerScore > 21 || playerScore > computerScore)
+                        {
+                            Console.WriteLine("Gratulacje! Wygrałeś! Dostajesz 100 wódeczki");
+                            bj_wudeczka += 100;
+                        }
+                        else if (playerScore < computerScore)
+                        {
+                            Console.WriteLine("Przegrałeś. Komputer wygrał. Tracisz 100 wódeczki");
+                            bj_wudeczka -= 100;
+                            
+                        }
+                        else
+                        {
+                            Console.WriteLine("Remis!");
+                        }
+                        wudeczka_1 = bj_wudeczka;
+                    }
+
+                    static List<string> talia()
+                    {                       
+                        string[] values = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };                      
+                        string[] suits = { "♠", "♥", "♦", "♣" };                        
+                        List<string> deck = new List<string>();
+
+                        foreach (string value in values)
+                        {
+                            foreach (string suit in suits)
+                            {
+                                deck.Add(value + suit);
+                            }
+                        }
+                        return deck;
+                    }
+                    static void tasowanie(List<string> deck)
+                    {
+                        Random random = new Random();
+                        int n = deck.Count;
+
+                        while (n > 1)
+                        {
+                            n--;
+                            int k = random.Next(n + 1);
+                            string value = deck[k];
+                            deck[k] = deck[n];
+                            deck[n] = value;
+                        }
+                    }
+
+                    static string rozdanie(List<string> deck)
+                    {
+                        string card = deck[0];
+                        deck.RemoveAt(0);
+                        return card;
+                    }
+
+                    static int obliczenia(List<string> hand)
+                    {
+                        int value = 0;
+                        int numAces = 0;
+
+                        foreach (string card in hand)
+                        {
+                            string valueStr = card.Substring(0, card.Length - 1);
+
+                            if (valueStr == "A")
+                            {
+                                value += 11;
+                                numAces++;
+                            }
+                            else if (valueStr == "K" || valueStr == "Q" || valueStr == "J")
+                            {
+                                value += 10;
+                            }
+                            else
+                            {
+                                value += int.Parse(valueStr);
+                            }
+                        }                       
+                        while (value > 21 && numAces > 0)
+                        {
+                            value -= 10;
+                            numAces--;
+                        }
+
+                        return value;
+                    }
+
+                }
+            }
+
+
+        }
+        static void WyswietlOsoby()
+        {
+            int indeks = 1;
+            ListaOsob.Sort((x, y) => y.wudeczka.CompareTo(x.wudeczka));
+            foreach (var osoba in ListaOsob)
+            {
+                Console.Write($"{indeks++} ");
+                osoba.wpswietlnickitp();
+            }
+
+        }
+        static void rankink()
+        {
+            
+
+            WyswietlOsoby();
+
+            Console.ReadKey();
+            Thread.Sleep(1000);
+            Console.Clear();
+            Menugl(); 
+        }
+        static void woda()
+        {
+            if (wudeczka_1 > 1000)
+            {
+               
+                Console.WriteLine($"Drogi {nick1}");
+                Console.WriteLine("Mam niestety obowiązek poinformować Cię, że przekroczyłeś limit spożycia alkoholu na naszym serwerze.");
+                Console.WriteLine("W związku z tym zalecamy zachowanie umiaru i przypominamy o zasadach fair play.");
+                Console.WriteLine("Zdajemy sobie sprawę, że czasami emocje podczas gry mogą skłonić do sięgnięcia po alkohol, jednak liczym y na Twoją odpowiedzialność i zdrowy rozsądek.");
+                Console.WriteLine("");
+                Console.WriteLine(" Pamiętaj, że korzystanie z naszej platformy wymaga przestrzegania ustalonych zasad, a nadmierna konsumpcja alkoholu może wpływać negatywnie na Twoje zdolności w grze, a także na atmosferę wśród innych graczy.");
+                Console.WriteLine(" Zachęcamy do picia z umiarem i pamiętania o tym, że wszyscy tutaj grają dla przyjemności.");
+                Console.WriteLine(" Mamy nadzieję, że zrozumiesz nasze stanowisko i podejdziesz do sprawy z pełnym zrozumieniem. ");
+                Console.WriteLine("Liczymy na Twój rozwagę i odpowiedzialność podczas korzystania z naszej platformy. ");
+                Console.WriteLine("Dziękujemy za zrozumienie.");
+                Console.WriteLine("Z poważaniem");
+                Console.WriteLine("\r\n[Zespół Obsługi Graczy]");
+                Console.ReadKey();
+                Console.Clear();
+                Menugl();
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("Gratulację masz +500 Wódeczki!!! SIGMA");
+                wudeczka_1 += 500;
+                Thread.Sleep(1500);
+                Console.Clear();
+                Menugl();
+            }
+        }
+
+        static void Regulamin()
+        {
+            Console.WriteLine("*** SZALONA WÓDECZKA CASINO ***");
+            Console.WriteLine("Witaj w wirtualnym kasynie studia Bartek & Krzysiu Development");
+            Console.WriteLine("1. Aby zagrać w gry należy mieć ukończonę 18 lat ");
+            Console.WriteLine("2. Aby zagrać w grę przed wejśćiem do niej należy doładować wódeczkę (max. ilość wódeczki: 1500 ");
+            Console.WriteLine("3. Jeśli gracz nie doałduje wódeczki nie będzie w stanie wejść do pojedyńczej gry ");
+            Console.WriteLine("4. Gracz wchodząć do gry akceptuje regulamin");
+            Console.WriteLine("Kliknij aby wyjść");
+
+        
+            Console.ReadKey();
+            Console.Clear();
+            Menugl();
+        }
+
+
+
+        static void Menugl()
+        {
+            
+            Narzedzia.Menu menu = new Narzedzia.Menu(ConsoleColor.DarkGreen, ConsoleColor.Magenta, ConsoleColor.Yellow, ConsoleColor.Black);
+            menu.Dodaj(new Narzedzia.PozycjaMenu(1, "Dodaj Gracza"));
+            menu.Dodaj(new Narzedzia.PozycjaMenu(2, "wódeczka"));
+            menu.Dodaj(new Narzedzia.PozycjaMenu(3, "Graj"));
+            menu.Dodaj(new Narzedzia.PozycjaMenu(4, "Zapisz stan gry"));
+            menu.Dodaj(new Narzedzia.PozycjaMenu(5, "Ranking"));
+            menu.Dodaj(new Narzedzia.PozycjaMenu(6, "Regulamin"));
+            menu.Dodaj(new Narzedzia.PozycjaMenu(7, "wyjdz"));
+            int wyborgra = menu.Wybierz(0, 0);
+
+            bool czyKontunuowac = true;
+            while (czyKontunuowac)
+            {
+
+                Console.Clear();
+                switch (wyborgra)
+                {
+                    case 1:
+                        Console.Clear();
+                        Console.WriteLine("Podaj nick:");
+                        nick1 = Console.ReadLine();
+                        Menugl();
+                        break; ; break;
+
+                    case 2: woda(); break;
+                    case 3:
+                        Gra();
+                        break;
+                    case 4:
+                        Console.Clear();
+                        DodajOsobe();
+                        ZapiszDane();
+                        Console.WriteLine("Zapisano aktualne podejście");
+                        Console.ReadKey();
+                        Thread.Sleep(500);
+                        Menugl();
+                        break;
+                    case 5:
+                        rankink();
+                        break;
+                    case 6: Regulamin(); break;
+                    case 7:
+                        czyKontunuowac = false;
+                        Environment.Exit(0);
+                        break;
+
+                }
+
+
+            }
+
+        }
+
+        static void Main(string[] args)
+        {
+            WczytajDane();
+
+            {
+                Console.WriteLine($"Czy masz 18 lat? (T/N)");
+
+                while (true)
+                {
+                    var przycisk = Console.ReadKey(true);
+
+                    if (przycisk.Key == ConsoleKey.N)
+                    {
+                        break;
+                    }
+                    else if (przycisk.Key == ConsoleKey.T)
+                    {
+                        Console.Clear();
+                        Menugl();
+                    }
+                }
+            }
+        }
+    }
+}
